@@ -1,0 +1,16 @@
+#es {
+  width:800px;
+  height:659px;
+  margin:0;
+  padding:0;
+  background-image: url("etchasketch.jpg");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+#dot {
+  position: relative;
+  width:5px;
+  height:5px;
+  background-color: red;
+}
