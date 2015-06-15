@@ -1,19 +1,140 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Etch-a-Sketch</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="css/etchasketch.css" />
   <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  
   <script type="text/javascript" src="js/pouchdb-3.6.0.min.js"></script>
+  <script type="text/javascript" src="js/uuid.js"></script>
   <script type="text/javascript" src="js/etchasketch.js"></script>
 </head>
 <body>
   
-  <div id="container">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+  
+    <div class="container">
+      <div class="navbar-header hidden-xs hidden-sm">
+        <a href="/" class="navbar-brand">MD</a>
+      </div>
+
+      <form role="search" onsubmit="return saveDoc()" class="navbar-form navbar-left">
+        <div class="form-group">
+          <button type="button" onclick="newClicked()" class="myctrl btn">New</button>
+        </div>
+
+        <div class="form-group">
+          <button type="button" onclick="loadClicked()" class="myctrl btn">Load</button>
+        </div>
+
+        <div class="form-group">
+          <input id="doc_name" type="text" placeholder="document name" class="form-control myctrl" />
+        </div>
+        
+        <button id="savebtn" type="submit" class="myctrl btn btn-default">Save</button>
+      </form>
+
+      
+      <form class="navbar-form navbar-right" onsubmit="return saveDoc()">
+          <div class="form-group">
+              <button class="myctrl btn" onclick="settingsClicked()" type="button"><span class="glyphicon glyphicon-cog"></span></button>
+          </div>
+      </form>
+      
+      
+    </div>
+  </nav>
+  
+
+  <div id="container" class="container">
+    <div class="header">
+         <div id="alerts"></div>
+     </div>
+     
     <canvas id="es" width="800" height="659">
     
     </canvas>
     <div id="dot"></div>
+    
+    
+    <div class="modal fade" id="loadmodal">
+       <div class="modal-dialog">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <button class="close" data-dismiss="modal" type=
+                   "button"><span></span></button>
+
+                   <h4 class="modal-title">My Documents</h4>
+               </div>
+
+               <div class="modal-body">
+                   <table class="table" id="mydocuments"></table>
+               </div>
+
+               <div class="modal-footer">
+                   <button class="btn btn-default" data-dismiss="modal"
+                   type="button">Close</button>
+               </div>
+           </div>
+       </div>
+    </div>
+    
+    <div class="modal fade" id="settingsmodal">
+         <div class="modal-dialog">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <button class="close" data-dismiss="modal" type=
+                     "button"><span></span></button>
+
+                     <h4 class="modal-title">Settings</h4>
+                 </div>
+
+                 <div class="modal-body">
+                     <p>If you would like your documents backed up to
+                     Cloudant, then simply add the URL of read/writable
+                     database in the form below.</p>
+
+                     <ul>
+                         <li>Sign-up for a Cloudant account</li>
+
+                         <li>Create a new database</li>
+
+                         <li>In the permissions tab, generate a new api
+                         key</li>
+
+                         <li>Make the generated api have "reader" & writer
+                         access</li>
+
+                         <li>Enable CORS access</li>
+
+                         <li>Construct the url:
+                         https://APIKEY:PASSWORD@HOSTNAME.cloudant.com/DATABASE_NAME</li>
+                     </ul>
+
+                     <form class="form" onsubmit="return settingsSubmit()">
+                         <div class="form-group">
+                             <input class="form-control myctrl" id=
+                             "cloudanturl" placeholder="cloudant url" type=
+                             "url">
+                         </div><button class="myctrl btn btn-danger" type=
+                         "submit">Save</button>
+                     </form>
+                 </div>
+
+                 <div class="modal-footer">
+                     <button class="btn btn-default" data-dismiss="modal"
+                     type="button">Close</button>
+                 </div>
+             </div>
+         </div>
+     </div>
+    
   </div>
 
 </body>
