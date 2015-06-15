@@ -71,12 +71,16 @@ var getDocList = function(callback) {
 };
 
 var loadDoc = function(id) {
-  reset();
   db.get(id, function(err, data){
     if(err) {
       alert("Non-existant document!", id);
       return
     }
+    if(data.points.length>0) {
+      lastX = data.points[0][0];
+      lastY = data.points[0][1]; 
+    }
+    reset();
     $('#jumbo').hide();
     $('#doc_name').val(data.doc_name);
     doc_id = data.doc_id;
@@ -92,10 +96,8 @@ var newClicked = function() {
   reset();
   doc_id = null;
   $('#doc_name').val("");
-  last_saved="";
   createAlert("New Document created", "");
   $('#jumbo').hide();
-  $('#thedoc').show();
 };
 
 var deleteClicked = function(id) {
@@ -195,8 +197,6 @@ var createAlert = function(title, message, keep) {
 
 var setXY = function(x,y,first) {
   
-  
-  
   x = (x<0)? 0 : x;
   x = (x>1)? 1 : x;
   y = (y<0)? 0 : y;
@@ -234,9 +234,11 @@ var reset = function() {
   var c = document.getElementById("es");
   var ctx = c.getContext("2d");
   ctx.clearRect(0, 0, c.width, c.height);
-  points = [ ];  
-  setXY(lastX,lastY);  
-  lastX = lastY = null;
+  points = [ ]; 
+  if(lastX == null || lastY == null) {
+    lastX = lastY = 0.5;
+  }
+  setXY(lastX,lastY); 
 }
 
 var shake = function() {
@@ -253,10 +255,6 @@ var shake = function() {
 
 jQuery( document ).ready(function( $ ) {
   
-  // reset the page
-  reset();  
-  
-  
   // load any pre-saved sync config
   getSyncConfig(function(err, data) {
     console.log("sync data", err, data);
@@ -272,10 +270,11 @@ jQuery( document ).ready(function( $ ) {
   cloudant.changes({ since: "now", live: true, include_docs: true})
   .on('change', function(change) {
     // handle change
+    
     var d = change.doc.d
     x = d.potentiometer1;
     y = d.potentiometer2;
-//    console.log("Change",getTS(),x,y,d.accelX,d.accelY,d.accelZ);
+    console.log("Change",getTS(),x,y,d.accelX,d.accelY,d.accelZ);
     if(Math.abs(d.accelY) > 0.4) {
       shake();
     }
@@ -286,7 +285,7 @@ jQuery( document ).ready(function( $ ) {
     console.log("ERROR",e);
   });
   
-  console.log("READY");
+//  console.log("READY");
   // keypress handler
   $("body").keypress(function(e){
     switch(e.which) {
@@ -306,7 +305,11 @@ jQuery( document ).ready(function( $ ) {
         shake();
         break                   
     }
-    console.log(e.which)
+//    console.log(e.which)
   });
+  
+  // reset the page
+  reset();  
+  
   
 });
