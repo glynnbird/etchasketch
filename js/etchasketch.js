@@ -270,12 +270,13 @@ jQuery( document ).ready(function( $ ) {
   cloudant.changes({ since: "now", live: true, include_docs: true})
   .on('change', function(change) {
     // handle change
-    
+    $('#json').html(JSON.stringify(change.doc,null,"  "));
+    $('#json').show();
     var d = change.doc.d
     x = d.potentiometer1;
     y = d.potentiometer2;
-    console.log("Change",getTS(),x,y,d.accelX,d.accelY,d.accelZ);
-    if(Math.abs(d.accelY) > 0.4) {
+//    console.log("Change",getTS(),x,y,d.accelX,d.accelY,d.accelZ);
+    if(Math.abs(d.accelY) > 0.4 || d.joystick == "CLICK") {
       shake();
     }
     setXY(x, y, firstChange);
